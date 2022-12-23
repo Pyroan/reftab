@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "reftab"
+version = "0.0.1"
+authors = [{ name = "Violet Moore", email = "Pyroan@users.noreply.github.com" }]
+description = "Quick Cheatsheets for Me And Me Alone <3"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+reftab = "reftab.main:run"
+
+[tool.pytest.ini_options]
+addopts = ["-s", "--import-mode=importlib"]
