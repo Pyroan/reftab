@@ -32,14 +32,15 @@ class asciitable:
     ] + [chr(x) for x in range(32, 127)] + ["DEL"]
 
     def __str__(self):
-        title = f"{t.bold}{self.name} ({self.source_revised}){t.reset}"
-        body = "\u2502".join([f" {t.bold}Dec Hx Chr{t.reset} "]*4)+"\n"
-        body += "\u253c".join(["\u2500"*12]*4)+"\n"
+        title = f"{t.BOLD}{self.name} ({self.source_revised}){t.RESET}"
+        body = t.LINE_VT.join([f" {t.BOLD}Dec Hx Chr{t.RESET} "]*4)+"\n"
+        body += t.CAP_R + t.LINE_HZ*11 + \
+            (t.LINE_HZ*12).join([t.CROSS]*3)+t.LINE_HZ*11 + t.CAP_L + "\n"
         for i in range(32):
             for j in range(4):
-                body += f"{t.white}{i+(32*j):>4} {i+(32*j):>2X}{t.reset} {t.red}{self.data[i+(32*j)]:<3}{t.reset} "
+                body += f"{t.WHITE}{i+(32*j):>4} {i+(32*j):>2X}{t.RESET} {t.RED}{self.data[i+(32*j)]:<3}{t.RESET} "
                 if j < 3:
-                    body += "\u2502"
+                    body += t.LINE_VT
             body += "\n"
         return t.box(body, title)
 
