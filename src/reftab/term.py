@@ -68,18 +68,35 @@ TSEP_R_DOUBLE = "\u2560"
 CROSS_DOUBLE = "\u256c"
 
 
+def rgb256(r: int, g: int, b: int) -> str:
+    """Returns an escape code that will print text with the 8-bit color closest to the given 0..256 rgb values (at least on an xterm)"""
+    # Hey turns out you can just, use fancy colors if you feel like it.
+    # (fwiw my terminal seems to support TrueColor but hey, X11 colors should still be correct when cast to 8bit)
+    # map each component from 0..256 to 0..6
+    r, g, b = map(lambda x: int(x/255*5+0.5), [r, g, b])
+    # Offset by 16 because 0x0..0xF are used for base colors
+
+    return f"\033[38;5;{r*36 + g*6 + b + 16}m"
+
+
+def rgb24bit(r: int, g: int, b: int) -> str:
+    # Like above, but for terminals that support TrueColor and don't need to throw away accuracy
+    return f"\033[38;2;{r};{g};{b}m"
+
+
 def esc_len(s):
-    return len(re.sub(chr(27)+r"\[\d+m", "", s))
+    return len(re.sub(chr(27)+r"\[.+?m", "", s))
 
 
 def box(body: str, header: str = None) -> str:
     """Return a string that draws `body` and `header` inside a box using UTF-8 Box Drawing characters"""
     b = body.splitlines()
+    header = header.strip()
     m = max([esc_len(x) for x in b+[header]])
     s = f"{CORNER_UL_DOUBLE}{m*LINE_HZ_DOUBLE}{CORNER_UR_DOUBLE}\n"
     if header != None:
         offset = (m-esc_len(header)-2) // 2
-        s += f"{LINE_VT_DOUBLE} {' '*offset}{header}{' '*offset} {LINE_VT_DOUBLE}\n"
+        s += f"{LINE_VT_DOUBLE} {' '*offset}{header}{' '*(offset+(m%2==0))} {LINE_VT_DOUBLE}\n"
         s += f"{TSEP_R_DOUBLE}{m*LINE_HZ_DOUBLE}{TSEP_L_DOUBLE}\n"
     for i in b:
         s += f"{LINE_VT_DOUBLE}{i}{' '*(m-esc_len(i)-2)}{LINE_VT_DOUBLE}\n"

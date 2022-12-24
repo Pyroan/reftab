@@ -10,7 +10,7 @@ class asciitable:
     name = "US-ASCII"
     # metadata
     ref_added = datetime.date(2022, 12, 22)
-    ref_updated = datetime.date(2022, 12, 22)
+    ref_updated = datetime.date(2022, 12, 23)
     authority = "IANA"
     source_introduced = "1963"
     source_revised = "1986"

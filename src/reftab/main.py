@@ -1,13 +1,14 @@
 import argparse
 from reftab.asciitable import asciitable
-
+from reftab.csscolors import css_colors
 # def page437(): ...
 
 
 tables = [
     # if this gets too big will switch to a quasi-observer pattern where tables register themselves in some
     # central data structure that main calls to instead
-    asciitable
+    asciitable,
+    css_colors
 ]
 
 
