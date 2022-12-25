@@ -1,4 +1,5 @@
-"""Helpers for nice terminal output"""
+"""Helpers for nice terminal output
+Uh oh this is swiftly becoming a god module for all string building/formatting. whoops."""
 import re
 
 import colorama
@@ -85,7 +86,23 @@ def rgb24bit(r: int, g: int, b: int) -> str:
 
 
 def esc_len(s):
+    """Escaped Length: len() but excluding non-visible ansi escape codes."""
     return len(re.sub(chr(27)+r"\[.+?m", "", s))
+
+
+def align(s: str, alignment: str, width: int):
+    s = s.strip()
+    offset = " " * (width - len(s))
+    if alignment == "left":
+        s += offset
+    elif alignment == "right":
+        s = offset + s
+    elif alignment == "center":
+        pivot = len(offset)//2 + (len(offset) % 2)
+        s = offset[pivot:] + s + offset[:pivot]
+    else:
+        raise ValueError("Invalid alignment")
+    return s
 
 
 def box(body: str, header: str = None) -> str:
@@ -102,3 +119,86 @@ def box(body: str, header: str = None) -> str:
         s += f"{LINE_VT_DOUBLE}{i}{' '*(m-esc_len(i)-2)}{LINE_VT_DOUBLE}\n"
     s += f"{CORNER_DL_DOUBLE}{m*LINE_HZ_DOUBLE}{CORNER_DR_DOUBLE}\n"
     return s
+
+
+class Column:
+    """A column for holding arbitrary data in a Table
+    (we don't need to organize this by records like a database, since for now we're always printing tables all at once,
+    so for formatting it's more pragmatic to organize this by "fields")
+
+    Default values for keyword args:
+
+    `title`: optional, if no other rows in the table have titles either, only the rows will be printed.
+    `rows`: (ordered) List of data entires to displayed in the column
+    `width`: in terminal columns (characters). if 0, will be automatically set to fit the longest entry; if >0, will trim any entries too long to fit.
+    `alignment`: one of `"left"`, `"right"`, `"center"`; sets alignment for header and all entries. `"left"` by default.
+    """
+
+    def __init__(self, title: str = "", rows: list = [], width: int = 0, alignment: str = "left"):
+        self.title = title
+        self.rows = rows
+
+        self.width = width
+        self.height = len(self.rows) + 1 + (1 if self.title else 0)
+
+        self.alignment = alignment
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @title.setter
+    def title(self, value: str):
+        if "\n" in value:
+            raise ValueError("Column titles cannot contain newlines")
+        self._title = value
+
+    @property
+    def width(self) -> int:
+        # This feels like a HACK but we're going to set _width inside the getter. Lol.
+        return max(esc_len(x) for x in self.rows+[self.title]) if self._auto_width else self._width
+
+    @width.setter
+    def width(self, value: int):
+        if value < 0:
+            raise ValueError("Column width can't be negative")
+        elif value == 0:
+            self._auto_width = True
+        else:
+            self._auto_width = False
+            self._width = value
+
+    @property
+    def alignment(self):
+        return self._alignment
+
+    @alignment.setter
+    def alignment(self, value):
+        if value not in ["left", "right", "center"]:
+            raise ValueError(f"Invalid alignment: {repr(value)}")
+        self._alignment = value
+
+    def __str__(self):
+        if len(self.rows) == 0:
+            # debating whether printing an empty Column should raise a ValueError or just happen...
+            return ""
+        s = ""
+        if self.title:
+            s += align(self.title, self.alignment, self.width) + "\n"
+            s += LINE_HZ * self.width + "\n"
+        for r in self.rows:
+            s += align(r, self.alignment, self.width) + "\n"
+        return s
+
+
+class Table:
+    """A structure that stores/displays multiple Columns of data.
+
+    Should also handle its own wrapping when necessary.
+    """
+
+    def __init__(self, title: str = None, columns: list[Column] = []): ...
+
+    def __str__(self):
+        if self.title:
+            ...

@@ -28,7 +28,7 @@ def fetch_table(name) -> object:
 def run():
     parser = argparse.ArgumentParser(
         description="Fetch lil cheatsheets for data n such",
-        epilog="Supported Tables:\n"+"\n".join(n.name for n in tables))
+        epilog="Supported Tables:\n"+", ".join(n.name for n in tables))
     parser.add_argument(
         "table", help="name of the desired reference table (IANA aliases also work)")
     args = parser.parse_args()
