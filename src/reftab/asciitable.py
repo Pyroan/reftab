@@ -32,17 +32,13 @@ class asciitable:
     ] + [chr(x) for x in range(32, 127)] + ["DEL"]
 
     def __str__(self):
-        title = f"{t.BOLD}{self.name} ({self.source_revised}){t.RESET}"
-        body = t.LINE_VT.join([f" {t.BOLD}Dec Hx Chr{t.RESET} "]*4)+"\n"
-        body += t.CAP_R + t.LINE_HZ*11 + \
-            (t.LINE_HZ*12).join([t.CROSS]*3)+t.LINE_HZ*11 + t.CAP_L + "\n"
-        for i in range(32):
-            for j in range(4):
-                body += f"{t.WHITE}{i+(32*j):>4} {i+(32*j):>2X}{t.RESET} {t.RED}{self.data[i+(32*j)]:<3}{t.RESET} "
-                if j < 3:
-                    body += t.LINE_VT
-            body += "\n"
-        return t.box(body, title)
+        title = f"{self.name} ({self.source_revised})"
+        tab = t.Table(title=title, columns=[
+            t.Column("Dec", [f"{i}"for i in range(128)], alignment="right"),
+            t.Column("Hx", [f"{i:X}"for i in range(128)], alignment="right"),
+            t.Column("Chr", [f"{t.RED}{c}{t.RESET}" for c in self.data])
+        ], sections=4)
+        return str(tab)
 
 
 if __name__ == "__main__":

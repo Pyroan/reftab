@@ -194,7 +194,27 @@ class css_colors:
     }
 
     def __str__(self):
-        title = f"{t.BOLD}{self.name} ({self.source_revised}){t.RESET}"
+        title = f"{self.name} ({self.source_revised})"
+        names = t.Column("Name", alignment="right")
+        hx = t.Column("Hex")
+        red = t.Column("R", alignment="right")
+        green = t.Column("G", alignment="right")
+        blue = t.Column("B", alignment="right")
+        for k, v in self.data.items():
+            r = int(v[1:3], 16)
+            g = int(v[3:5], 16)
+            b = int(v[5:], 16)
+
+            names.rows += [f"{t.rgb24bit(r,g,b)}{k}{t.RESET}"]
+            hx.rows += [v]
+            red.rows += [str(r)]
+            green.rows += [str(g)]
+            blue.rows += [str(b)]
+
+        tab = t.Table(title=title, columns=[
+                      names, hx, red, green, blue], sections=2)
+        return str(tab)
+
         offset = max((len(x)for x in self.data.keys()))
         column_header = " "*(offset-4)+"Name "
         column_header += t.LINE_VT + " Hex     " + t.LINE_VT + "   R   G   B"
@@ -207,12 +227,12 @@ class css_colors:
         d = [(k, v)for k, v in self.data.items()]
         for i in range(len(d)//2):
             for j in [i, i+len(d)//2]:
-                r = int(d[j][1][1:3], 16)
-                g = int(d[j][1][3:5], 16)
-                b = int(d[j][1][5:], 16)
-                body += f"{t.rgb24bit(r, g, b)} " + \
+                red = int(d[j][1][1:3], 16)
+                green = int(d[j][1][3:5], 16)
+                blue = int(d[j][1][5:], 16)
+                body += f"{t.rgb24bit(red, green, blue)} " + \
                     " "*(offset-len(d[j][0])) + d[j][0] + t.RESET+t.LINE_VT
-                body += f" {d[j][1]} {t.LINE_VT} {r:>3} {g:>3} {b:>3} "
+                body += f" {d[j][1]} {t.LINE_VT} {red:>3} {green:>3} {blue:>3} "
             body += "\n"
         return t.box(body, title)
 

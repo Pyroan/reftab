@@ -134,7 +134,9 @@ class Column:
     `alignment`: one of `"left"`, `"right"`, `"center"`; sets alignment for header and all entries. `"left"` by default.
     """
 
-    def __init__(self, title: str = "", rows: list = [], width: int = 0, alignment: str = "left"):
+    def __init__(self, title: str = "", rows: list = None, width: int = 0, alignment: str = "left"):
+        if rows == None:
+            rows = []
         self.title = title
         self.rows = rows
 
@@ -198,7 +200,9 @@ class Table:
     (to save space). If greater than the number of columns, empty sections will be ignored (not printed)
     """
 
-    def __init__(self, title: str = "", columns: list[Column] = [], sections=1):
+    def __init__(self, title: str = "", columns: list[Column] = None, sections=1):
+        if columns == None:
+            columns = []
         self.title = title  # i'll do validations later or not.
         self.columns = columns
         self.sections = sections
@@ -220,7 +224,7 @@ class Table:
         body = ""
         cols = [str(c).splitlines() for c in self.columns]
 
-        sections = min(self.sections, len(self.columns))
+        sections = min(self.sections, max(len(c.rows) for c in self.columns))
 
         # Titles, if there's any.
         if not all(c.title == "" for c in self.columns):
