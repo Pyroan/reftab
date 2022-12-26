@@ -1,5 +1,6 @@
 """Helpers for nice terminal output
 Uh oh this is swiftly becoming a god module for all string building/formatting. whoops."""
+import math
 import re
 
 import colorama
@@ -91,8 +92,8 @@ def esc_len(s):
 
 
 def align(s: str, alignment: str, width: int):
-    s = s.strip()
-    offset = " " * (width - len(s))
+    # s = s.strip() # turns out this was breaking more than it was protecting.
+    offset = " " * (width - esc_len(s))
     if alignment == "left":
         s += offset
     elif alignment == "right":
@@ -107,17 +108,16 @@ def align(s: str, alignment: str, width: int):
 
 def box(body: str, header: str = None) -> str:
     """Return a string that draws `body` and `header` inside a box using UTF-8 Box Drawing characters"""
-    b = body.splitlines()
+    body = body.splitlines()
     header = header.strip()
-    m = max([esc_len(x) for x in b+[header]])
-    s = f"{CORNER_UL_DOUBLE}{m*LINE_HZ_DOUBLE}{CORNER_UR_DOUBLE}\n"
+    width = max([esc_len(x) for x in body+[header]])
+    s = f"{CORNER_UL_DOUBLE}{width*LINE_HZ_DOUBLE}{CORNER_UR_DOUBLE}\n"
     if header != None:
-        offset = (m-esc_len(header)-2) // 2
-        s += f"{LINE_VT_DOUBLE} {' '*offset}{header}{' '*(offset+(m%2==0))} {LINE_VT_DOUBLE}\n"
-        s += f"{TSEP_R_DOUBLE}{m*LINE_HZ_DOUBLE}{TSEP_L_DOUBLE}\n"
-    for i in b:
-        s += f"{LINE_VT_DOUBLE}{i}{' '*(m-esc_len(i)-2)}{LINE_VT_DOUBLE}\n"
-    s += f"{CORNER_DL_DOUBLE}{m*LINE_HZ_DOUBLE}{CORNER_DR_DOUBLE}\n"
+        s += f"{LINE_VT_DOUBLE}{align(header,'center',width)}{LINE_VT_DOUBLE}\n"
+        s += f"{TSEP_R_DOUBLE}{width*LINE_HZ_DOUBLE}{TSEP_L_DOUBLE}\n"
+    for line in body:
+        s += f"{LINE_VT_DOUBLE}{align(line,'left',width)}{LINE_VT_DOUBLE}\n"
+    s += f"{CORNER_DL_DOUBLE}{width*LINE_HZ_DOUBLE}{CORNER_DR_DOUBLE}\n"
     return s
 
 
@@ -194,11 +194,54 @@ class Column:
 class Table:
     """A structure that stores/displays multiple Columns of data.
 
-    Should also handle its own wrapping when necessary.
+    `sections` is the number of roughly equal parts the table will be split into when it is displayed
+    (to save space). If greater than the number of columns, empty sections will be ignored (not printed)
     """
 
-    def __init__(self, title: str = None, columns: list[Column] = []): ...
+    def __init__(self, title: str = "", columns: list[Column] = [], sections=1):
+        self.title = title  # i'll do validations later or not.
+        self.columns = columns
+        self.sections = sections
+
+    @property
+    def sections(self):
+        return self._sections
+
+    @sections.setter
+    def sections(self, value):
+        if type(value) != int or value < 1:
+            raise ValueError("Invalid number of sections (must be an int >=1")
+        self._sections = value
 
     def __str__(self):
-        if self.title:
-            ...
+        # This function will be published in my obituary as one of my worst sins.
+        if len(self.columns) == 0:
+            return ""
+        body = ""
+        cols = [str(c).splitlines() for c in self.columns]
+
+        sections = min(self.sections, len(self.columns))
+
+        # Titles, if there's any.
+        if not all(c.title == "" for c in self.columns):
+            headers = f" {BOLD}"+f" {LINE_VT} ".join([f" ".join(c[0]
+                                                                for c in cols)]*sections) + f"{RESET} \n"
+            headers += CAP_R + \
+                f"{LINE_HZ}{CROSS}{LINE_HZ}".join([f"{LINE_HZ}".join(c[1]
+                                                                     for c in cols)]*sections) + CAP_L + "\n"
+            body += headers
+            cols = [c[2:] for c in cols]
+
+        # rows ("Entries")
+        entry_index = 0
+        height = math.ceil(
+            max(len(c) for c in cols)/sections)
+        while entry_index < height:
+            row = []
+            for e in range(entry_index, max(len(c)for c in cols), height):
+                row += [" "+" ".join(c[e] for c in cols)+" "]
+            entry_index += 1
+            row += [""] * (sections-len(row))
+            body += LINE_VT.join(row) + "\n"
+
+        return box(body, f"{BOLD}{self.title}{RESET}")
