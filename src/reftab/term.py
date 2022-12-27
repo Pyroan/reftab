@@ -2,6 +2,7 @@
 Uh oh this is swiftly becoming a god module for all string building/formatting. whoops."""
 import math
 import re
+from typing import List
 
 import colorama
 
@@ -204,7 +205,7 @@ class Table:
     (to save space). If greater than the number of columns, empty sections will be ignored (not printed)
     """
 
-    def __init__(self, title: str = "", columns: list[Column] = None, sections=1):
+    def __init__(self, title: str = "", columns: List[Column] = None, sections=1):
         if columns == None:
             columns = []
         self.title = title  # i'll do validations later or not.

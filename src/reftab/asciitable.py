@@ -1,4 +1,5 @@
 import datetime
+from typing import List
 
 import reftab.term as t
 
@@ -14,7 +15,7 @@ class asciitable:
     authority = "IANA"
     source_introduced = "1963"
     source_revised = "1986"
-    aliases: list[str] = [
+    aliases = [
         "iso-ir-6",
         "ANSI_X3.4-1968",
         "ANSI_X3.4-1986",
