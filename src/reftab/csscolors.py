@@ -6,6 +6,11 @@ import datetime
 import reftab.term as t
 
 
+def luma(r, g, b):
+    # Assuming a gamma of 2, entirely arbitrarily but also because it's faster to compute than a fractional one.
+    return 0.2126*(r*r) + 0.7152*(g*g) + 0.0722*(b*b)
+
+
 class css_colors:
     """Named CSS Colors (CSS Level 4)
 
@@ -205,7 +210,9 @@ class css_colors:
             g = int(v[3:5], 16)
             b = int(v[5:], 16)
 
-            names.rows += [f"{t.rgb24bit(r,g,b)}{k}{t.RESET}"]
+            should_invert = luma(r/255, g/255, b/255) < 0.08
+            names.rows += [
+                f"{should_invert and chr(0x1b)+'[47m'+t.INVERTED or ''}{t.rgb24bit(r,g,b)}{k}{t.RESET}"]
             hx.rows += [v]
             red.rows += [str(r)]
             green.rows += [str(g)]

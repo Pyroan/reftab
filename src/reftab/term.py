@@ -9,6 +9,7 @@ colorama.just_fix_windows_console()
 
 # color definitions
 RESET = "\033[0m"
+INVERTED = "\033[7m"
 BOLD = "\033[1m"
 UNDERLINE = "\033[4m"
 BLACK = "\033[1;30m"
