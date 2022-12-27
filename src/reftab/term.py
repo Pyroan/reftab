@@ -11,14 +11,14 @@ colorama.just_fix_windows_console()
 RESET = "\033[0m"
 BOLD = "\033[1m"
 UNDERLINE = "\033[4m"
-BLACK = "\033[30m"
-RED = "\033[31m"
-GREEN = "\033[32m"
-YELLOW = "\033[33m"
-BLUE = "\033[34m"
-MAGENTA = "\033[35m"
-CYAN = "\033[36m"
-WHITE = "\033[37m"
+BLACK = "\033[1;30m"
+RED = "\033[1;31m"
+GREEN = "\033[1;32m"
+YELLOW = "\033[1;33m"
+BLUE = "\033[1;34m"
+MAGENTA = "\033[1;35m"
+CYAN = "\033[1;36m"
+WHITE = "\033[1;37m"
 DIM = "\033[2m"
 
 #
@@ -109,10 +109,13 @@ def align(s: str, alignment: str, width: int):
 def box(body: str, header: str = None) -> str:
     """Return a string that draws `body` and `header` inside a box using UTF-8 Box Drawing characters"""
     body = body.splitlines()
-    header = header.strip()
+    if header:
+        header = header.strip()
+    else:
+        header = ""
     width = max([esc_len(x) for x in body+[header]])
     s = f"{CORNER_UL_DOUBLE}{width*LINE_HZ_DOUBLE}{CORNER_UR_DOUBLE}\n"
-    if header != None:
+    if header != "":
         s += f"{LINE_VT_DOUBLE}{align(header,'center',width)}{LINE_VT_DOUBLE}\n"
         s += f"{TSEP_R_DOUBLE}{width*LINE_HZ_DOUBLE}{TSEP_L_DOUBLE}\n"
     for line in body:
@@ -134,7 +137,7 @@ class Column:
     `alignment`: one of `"left"`, `"right"`, `"center"`; sets alignment for header and all entries. `"left"` by default.
     """
 
-    def __init__(self, title: str = "", rows: list = None, width: int = 0, alignment: str = "left"):
+    def __init__(self, title: str = "", rows: list = None, width: int = 0, align: str = "left"):
         if rows == None:
             rows = []
         self.title = title
@@ -143,7 +146,7 @@ class Column:
         self.width = width
         self.height = len(self.rows) + 1 + (1 if self.title else 0)
 
-        self.alignment = alignment
+        self.alignment = align
 
     @property
     def title(self) -> str:
@@ -225,11 +228,10 @@ class Table:
         cols = [str(c).splitlines() for c in self.columns]
 
         sections = min(self.sections, max(len(c.rows) for c in self.columns))
-
         # Titles, if there's any.
         if not all(c.title == "" for c in self.columns):
-            headers = f" {BOLD}"+f" {LINE_VT} ".join([f" ".join(c[0]
-                                                                for c in cols)]*sections) + f"{RESET} \n"
+            headers = f" {BOLD}"+f" {RESET}{LINE_VT}{BOLD} ".join([f" ".join(c[0]
+                                                                             for c in cols)]*sections) + f"{RESET} \n"
             headers += CAP_R + \
                 f"{LINE_HZ}{CROSS}{LINE_HZ}".join([f"{LINE_HZ}".join(c[1]
                                                                      for c in cols)]*sections) + CAP_L + "\n"

@@ -10,7 +10,7 @@ description = "Quick Cheatsheets useful for Me And Me Alone <3"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
-    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: MIT License",
     "Topic :: Utilities",
     "Programming Language :: Python :: 3 :: Only",

@@ -1,14 +1,14 @@
 import argparse
 from reftab.asciitable import asciitable
 from reftab.csscolors import css_colors
-# def page437(): ...
-
+from reftab.ibm437 import ibm437
 
 tables = [
     # if this gets too big will switch to a quasi-observer pattern where tables register themselves in some
     # central data structure that main calls to instead
     asciitable,
-    css_colors
+    css_colors,
+    ibm437,
 ]
 
 
@@ -34,6 +34,6 @@ def run():
     args = parser.parse_args()
     t = fetch_table(args.table)
     if t == None:
-        raise ValueError
+        raise ValueError(f"Couldn't find table with name: {args.table}")
     else:
         print(t())

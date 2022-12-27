@@ -195,11 +195,11 @@ class css_colors:
 
     def __str__(self):
         title = f"{self.name} ({self.source_revised})"
-        names = t.Column("Name", alignment="right")
+        names = t.Column("Name", align="right")
         hx = t.Column("Hex")
-        red = t.Column("R", alignment="right")
-        green = t.Column("G", alignment="right")
-        blue = t.Column("B", alignment="right")
+        red = t.Column("R", align="right")
+        green = t.Column("G", align="right")
+        blue = t.Column("B", align="right")
         for k, v in self.data.items():
             r = int(v[1:3], 16)
             g = int(v[3:5], 16)
@@ -214,27 +214,6 @@ class css_colors:
         tab = t.Table(title=title, columns=[
                       names, hx, red, green, blue], sections=2)
         return str(tab)
-
-        offset = max((len(x)for x in self.data.keys()))
-        column_header = " "*(offset-4)+"Name "
-        column_header += t.LINE_VT + " Hex     " + t.LINE_VT + "   R   G   B"
-
-        column_sep = t.CAP_R + t.LINE_HZ*(offset)+t.CROSS + \
-            t.LINE_HZ*9+t.CROSS+t.LINE_HZ*12 + t.CAP_L
-
-        body = f"{column_header} {column_header} \n"
-        body += f"{column_sep}{column_sep}\n"
-        d = [(k, v)for k, v in self.data.items()]
-        for i in range(len(d)//2):
-            for j in [i, i+len(d)//2]:
-                red = int(d[j][1][1:3], 16)
-                green = int(d[j][1][3:5], 16)
-                blue = int(d[j][1][5:], 16)
-                body += f"{t.rgb24bit(red, green, blue)} " + \
-                    " "*(offset-len(d[j][0])) + d[j][0] + t.RESET+t.LINE_VT
-                body += f" {d[j][1]} {t.LINE_VT} {red:>3} {green:>3} {blue:>3} "
-            body += "\n"
-        return t.box(body, title)
 
 
 if __name__ == "__main__":

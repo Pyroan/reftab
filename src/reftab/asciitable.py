@@ -34,8 +34,8 @@ class asciitable:
     def __str__(self):
         title = f"{self.name} ({self.source_revised})"
         tab = t.Table(title=title, columns=[
-            t.Column("Dec", [f"{i}"for i in range(128)], alignment="right"),
-            t.Column("Hx", [f"{i:X}"for i in range(128)], alignment="right"),
+            t.Column("Dec", [f"{i}"for i in range(128)], align="right"),
+            t.Column("Hx", [f"{i:X}"for i in range(128)], align="right"),
             t.Column("Chr", [f"{t.RED}{c}{t.RESET}" for c in self.data])
         ], sections=4)
         return str(tab)
