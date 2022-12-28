@@ -30,6 +30,7 @@ class css_colors:
     ref_added = datetime.date(2022, 12, 23)
     ref_added = datetime.date(2022, 12, 23)
     authority = "W3C"
+    source = "https://www.w3.org/TR/css-color-4/#named-colors"
     source_introduced = "1996"
     source_revised = "2022"
     aliases = [
@@ -43,7 +44,6 @@ class css_colors:
     #
     # I don't know why I'm like this. I don't know why I'm entering these by hand.
     # I don't know why I won't just get a list from somewhere else.
-    # Anyway, source: https://www.w3.org/TR/css-color-4/#named-colors
     #
     data = {
         "aliceblue": "#f0f8ff",

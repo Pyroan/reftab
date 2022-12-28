@@ -8,8 +8,7 @@ class ibm437:
     ref_updated = datetime.date(2022, 12, 26)
     authority = "IBM"
     source_introduced = "1981"  # year IBM PC was released
-
-    # https://www.iana.org/assignments/character-sets/character-sets.xhtml
+    source = "https://www.iana.org/assignments/character-sets/character-sets.xhtml"
     source_revised = "1990"
     aliases = ["cp437", "437", "csPC8CodePage437",
                "OEM-US"]
