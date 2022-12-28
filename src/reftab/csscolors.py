@@ -33,11 +33,12 @@ class css_colors:
     source_introduced = "1996"
     source_revised = "2022"
     aliases = [
+        "colors",
         "named-colors",
         "named-color",
         "x11-colors",
         "css-colors",
-        "colors"
+        "csscolors",
     ]
     #
     # I don't know why I'm like this. I don't know why I'm entering these by hand.

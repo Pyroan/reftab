@@ -1,15 +1,40 @@
 import argparse
+import datetime
 
+import reftab.term as term
 from reftab.asciitable import asciitable
 from reftab.csscolors import css_colors
 from reftab.ibm437 import ibm437
 
+
+class reftab:
+    name = "(this list)"
+    ref_added = datetime.date(2022, 12, 27)
+    ref_updated = datetime.date(2022, 12, 27)
+    aliases = [
+        "ls",
+        "all",
+        "reftab",
+        "this"
+    ]
+
+    def __str__(self):
+        tab = term.Table(title=" Available Tables ", columns=[
+            term.Column(rows=[term.MAGENTA + x.aliases[0] +
+                        term.RESET for x in tables]),
+            term.Column(rows=[x.name for x in tables])
+        ], sections=1)
+        return str(tab)
+
+
 tables = [
     # if this gets too big will switch to a quasi-observer pattern where tables register themselves in some
     # central data structure that main calls to instead
+    reftab,
     asciitable,
     css_colors,
     ibm437,
+
 ]
 
 
@@ -29,7 +54,7 @@ def fetch_table(name) -> object:
 def run():
     parser = argparse.ArgumentParser(
         description="Fetch lil cheatsheets for data n such",
-        epilog="Supported Tables:\n"+", ".join(n.name for n in tables))
+        epilog="Supported Tables:\n"+", ".join(n.name for n in tables[1:]))
     parser.add_argument(
         "table", help="name of the desired reference table (IANA aliases also work)")
     args = parser.parse_args()

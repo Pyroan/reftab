@@ -16,12 +16,12 @@ class asciitable:
     source_introduced = "1963"
     source_revised = "1986"
     aliases = [
+        "ascii",
         "iso-ir-6",
         "ANSI_X3.4-1968",
         "ANSI_X3.4-1986",
         "ISO_646.irv:1991",
         "ISO646-US",
-        "ASCII",
         "us",
         "IBM367",
         "cp367",
