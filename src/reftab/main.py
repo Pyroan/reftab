@@ -2,9 +2,7 @@ import argparse
 import datetime
 
 import reftab.term as term
-from reftab.asciitable import asciitable
-from reftab.csscolors import css_colors
-from reftab.ibm437 import ibm437
+from .data import *
 
 
 class reftab:
