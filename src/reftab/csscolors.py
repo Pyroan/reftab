@@ -212,7 +212,7 @@ class css_colors:
 
             should_invert = luma(r/255, g/255, b/255) < 0.08
             names.rows += [
-                f"{should_invert and chr(0x1b)+'[47m'+t.INVERTED or ''}{t.rgb24bit(r,g,b)}{k}{t.RESET}"]
+                f"{should_invert and t.BG_WHITE+t.INVERTED or ''}{t.rgb24bit(r,g,b)}{k}{t.RESET}"]
             hx.rows += [v]
             red.rows += [str(r)]
             green.rows += [str(g)]

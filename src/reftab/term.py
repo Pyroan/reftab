@@ -22,6 +22,7 @@ MAGENTA = "\033[1;35m"
 CYAN = "\033[1;36m"
 WHITE = "\033[1;37m"
 DIM = "\033[2m"
+BG_WHITE = "\033[47m"
 
 #
 # Subset of UTF8 box drawing characters

@@ -1,4 +1,5 @@
 import argparse
+
 from reftab.asciitable import asciitable
 from reftab.csscolors import css_colors
 from reftab.ibm437 import ibm437
@@ -36,4 +37,8 @@ def run():
     if t == None:
         raise ValueError(f"Couldn't find table with name: {args.table}")
     else:
-        print(t())
+        try:
+            print(t())
+        except UnicodeEncodeError:
+            raise ValueError(
+                "The requested output doesn't support Unicode! Sorry!")
